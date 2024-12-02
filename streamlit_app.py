@@ -2,6 +2,7 @@ import streamlit as st
 import torch
 import torch.nn as nn
 from torch.utils.data import Dataset
+import random
 
 # Custom dataset class for vocabulary and utilities
 class NameDataset(Dataset):
@@ -43,6 +44,8 @@ female_model.eval()
 
 # Name generation function
 def generate_name(model, dataset, start_str, max_len=20):
+    if not start_str:  # If input is empty, start with a random character
+        start_str = random.choice(list(dataset.char_to_int.keys()))
     start_str = start_str.lower()
     input_seq = torch.tensor([dataset.char_to_int[char] for char in start_str if char in dataset.char_to_int]).unsqueeze(0)
     hidden = None
@@ -67,18 +70,26 @@ def generate_name(model, dataset, start_str, max_len=20):
 st.title("Name Generator")
 st.write("Generate names based on gender and starting characters.")
 
+# Initialize session state for history
+if "history" not in st.session_state:
+    st.session_state.history = []
+
 # Input: starting characters
-start_str = st.text_input("Enter the starting character(s) (1-5 letters):", max_chars=5)
+start_str = st.text_input("Enter the starting character(s) (leave empty for random):", max_chars=5)
 
 # Input: gender selection
 gender = st.selectbox("Select gender:", ("Male", "Female"))
 
 # Generate button
 if st.button("Generate Name"):
-    if len(start_str) > 0:
-        model = male_model if gender == "Male" else female_model
-        dataset = male_dataset if gender == "Male" else female_dataset
-        generated_name = generate_name(model, dataset, start_str)
-        st.success(f"Generated Name: {generated_name}")
-    else:
-        st.error("Please enter a valid starting string.")
+    model = male_model if gender == "Male" else female_model
+    dataset = male_dataset if gender == "Male" else female_dataset
+    generated_name = generate_name(model, dataset, start_str)
+    st.session_state.history.append((gender, generated_name))
+    st.success(f"Generated Name: {generated_name}")
+
+# Display history
+if st.session_state.history:
+    st.subheader("History of Generated Names")
+    for gender, name in reversed(st.session_state.history):
+        st.write(f"{gender}: {name}")
