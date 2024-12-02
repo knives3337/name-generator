@@ -1,9 +1,11 @@
 # name-generator
 
-scraper.py - scrapes male/female names to the according text files
+scraper.py - scrapes male/female names.
 
-training.py - trains two models for each gender (200 epochs) 
+training.py - trains two models for each gender (200 epochs). Included models were trained with it.
 
 streamlit_app.py - runs streamlit webserver which looks similar to one in the task.
 
-streamlit-webserver.bat - easy webserver launcher
+streamlit-webserver.bat - easy webserver launcher.
+
+
