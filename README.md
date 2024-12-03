@@ -8,4 +8,4 @@ streamlit_app.py - runs streamlit webserver which looks similar to one in the ta
 
 streamlit-webserver.bat - easy webserver launcher.
 
-
+[hosted name generator](https://knives3337-name-gen.streamlit.app/)
